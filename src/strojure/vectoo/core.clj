@@ -14,7 +14,8 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defn- transient-insert-at
+(defn transient-insert-at
+  "Implements `insert-at` for transient vector."
   [^ITransientVector v!, ^long idx, obj]
   (let [len (.count v!)]
     (if (= idx len)
@@ -26,7 +27,8 @@
             (recur (unchecked-inc i) next-obj
                    (.assocN v! (unchecked-int i) obj))))))))
 
-(defn- transient-remove-at
+(defn transient-remove-at
+  "Implements `remove-at` for transient vector."
   [^ITransientVector v!, ^long idx]
   (let [last-i (unchecked-dec (.count v!))]
     (if (= idx last-i)
@@ -36,6 +38,8 @@
           (.pop v!)
           (let [k (unchecked-inc i)]
             (recur k (.assocN v! (unchecked-int i) (.nth v! (unchecked-int k))))))))))
+
+;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 ;; Build persistent vector using transient collection.
 
