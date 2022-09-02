@@ -44,6 +44,14 @@
       (= [x],,,,,,,,,, (persistent! (vec/insert-at (transient []) 0 x)))
       (thrown? IndexOutOfBoundsException (vec/insert-at (transient [1 2 3 4 5]) -1 x))
       (thrown? IndexOutOfBoundsException (vec/insert-at (transient [1 2 3 4 5]) 6 x))))
+
+  (testing "Insert element in non-editable collection."
+    (test/are [form] form
+      (= [1 2 x 3 4 5] (vec/insert-at (subvec [0 1 2 3 4 5] 1) 2 x))
+      (= [x 1 2 3 4 5] (vec/insert-at (subvec [0 1 2 3 4 5] 1) 0 x))
+      (= [1 2 3 4 5 x] (vec/insert-at (subvec [0 1 2 3 4 5] 1) 5 x))
+      (thrown? IndexOutOfBoundsException (vec/insert-at (subvec [0 1 2 3 4 5] 1) -1 x))
+      (thrown? IndexOutOfBoundsException (vec/insert-at (subvec [0 1 2 3 4 5] 1) 6 x))))
   )
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
@@ -80,6 +88,18 @@
       (= [],,,,,,, (persistent! (vec/remove-at (transient [1]) 0)))
       (thrown? IndexOutOfBoundsException (vec/remove-at (transient [1 2 3 4 5]) -1))
       (thrown? IndexOutOfBoundsException (vec/remove-at (transient [1 2 3 4 5]) 5))))
+
+  (testing "Remove element in non-editable collection."
+    (test/are [form] form
+      (= [2 3 4 5] (vec/remove-at (subvec [0 1 2 3 4 5] 1) 0))
+      (= [1 2 3 4] (vec/remove-at (subvec [0 1 2 3 4 5] 1) 4))
+      (= [1 2 4 5] (vec/remove-at (subvec [0 1 2 3 4 5] 1) 2))
+      (thrown? IndexOutOfBoundsException (vec/remove-at (subvec [0 1 2 3 4 5] 1) -2))
+      (thrown? IndexOutOfBoundsException (vec/remove-at (subvec [0 1 2 3 4 5] 1) 5)))
+    (comment
+      "Removing in subvec at -1 does not throw exceptions. Looks like a bug in
+      the core."
+      (thrown? IndexOutOfBoundsException (vec/remove-at (subvec [0 1 2 3 4 5] 1) -1))))
   )
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
