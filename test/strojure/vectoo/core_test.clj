@@ -1,6 +1,6 @@
-(ns strojure.vecto.core-test
+(ns strojure.vectoo.core-test
   (:require [clojure.test :as test :refer [deftest testing]]
-            [strojure.vecto.core :as vec]))
+            [strojure.vectoo.core :as vec]))
 
 (set! *warn-on-reflection* true)
 

@@ -1,4 +1,4 @@
-(ns strojure.vecto.core
+(ns strojure.vectoo.core
   (:import (clojure.lang ITransientCollection Indexed PersistentVector)))
 
 (set! *warn-on-reflection* true)

@@ -1,6 +1,6 @@
-(defproject com.github.strojure/vecto "0.0.1-SNAPSHOT"
+(defproject com.github.strojure/vectoo "0.0.1-SNAPSHOT"
   :description "Clojure implementation for the Chablis templating engine."
-  :url "https://github.com/strojure/vecto"
+  :url "https://github.com/strojure/vectoo"
   :license {:name "The MIT License" :url "http://opensource.org/licenses/MIT"}
 
   :dependencies []
