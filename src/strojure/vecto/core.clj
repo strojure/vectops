@@ -6,7 +6,7 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defn insert
+(defn insert-at
   "Inserts `obj` in the collection at index `idx` returning persistent vector."
   {:arglists '([coll idx obj])}
   [^Indexed coll, ^long idx, obj]

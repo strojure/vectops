@@ -14,23 +14,23 @@
 
   (testing "Insert element at index."
     (test/are [form] form
-      (vector?,,,,,,,, (vec/insert [1 2 3 4 5] 2 x))
-      (= [1 2 x 3 4 5] (vec/insert [1 2 3 4 5] 2 x))
-      (= [x 1 2 3 4 5] (vec/insert [1 2 3 4 5] 0 x))
-      (= [1 2 3 4 5 x] (vec/insert [1 2 3 4 5] 5 x))
-      (= [x],,,,,,,,,, (vec/insert [] 0 x))))
+      (vector?,,,,,,,, (vec/insert-at [1 2 3 4 5] 2 x))
+      (= [1 2 x 3 4 5] (vec/insert-at [1 2 3 4 5] 2 x))
+      (= [x 1 2 3 4 5] (vec/insert-at [1 2 3 4 5] 0 x))
+      (= [1 2 3 4 5 x] (vec/insert-at [1 2 3 4 5] 5 x))
+      (= [x],,,,,,,,,, (vec/insert-at [] 0 x))))
 
   (testing "Insert element out of bounds."
     (test/are [form] form
-      (thrown? IndexOutOfBoundsException (vec/insert [1 2 3 4 5] -1 x))
-      (thrown? IndexOutOfBoundsException (vec/insert [1 2 3 4 5] 6 x))))
+      (thrown? IndexOutOfBoundsException (vec/insert-at [1 2 3 4 5] -1 x))
+      (thrown? IndexOutOfBoundsException (vec/insert-at [1 2 3 4 5] 6 x))))
 
   (testing "Preserve metadata on insert."
     (test/are [form] form
-      (= {::meta true} (meta (vec/insert ^::meta [1 2 3 4 5] 2 x)))
-      (= {::meta true} (meta (vec/insert ^::meta [1 2 3 4 5] 0 x)))
-      (= {::meta true} (meta (vec/insert ^::meta [1 2 3 4 5] 5 x)))
-      (= {::meta true} (meta (vec/insert ^::meta [] 0 x)))))
+      (= {::meta true} (meta (vec/insert-at ^::meta [1 2 3 4 5] 2 x)))
+      (= {::meta true} (meta (vec/insert-at ^::meta [1 2 3 4 5] 0 x)))
+      (= {::meta true} (meta (vec/insert-at ^::meta [1 2 3 4 5] 5 x)))
+      (= {::meta true} (meta (vec/insert-at ^::meta [] 0 x)))))
 
   )
 
