@@ -7,10 +7,10 @@
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (defprotocol VectorOps
-  (insert-at [coll, idx, obj]
-    "Inserts `obj` in the indexed collection at index `idx`.")
-  (remove-at [coll, idx]
-    "Removes element from the indexed collection at index `idx`."))
+  (insert-at [vec, idx, obj]
+    "Inserts `obj` in the vector at index `idx`.")
+  (remove-at [vec, idx]
+    "Removes element from the vector at index `idx`."))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -21,9 +21,8 @@
     (loop [i idx, obj obj, v! v!]
       (if (= i len)
         (.conj v! obj)
-        (let [next-obj (.nth v! (unchecked-int i))]
-          (recur (unchecked-inc i) next-obj
-                 (.assocN v! (unchecked-int i) obj)))))))
+        (recur (unchecked-inc i) (.nth v! (unchecked-int i))
+               (.assocN v! (unchecked-int i) obj))))))
 
 (defn transient-remove-loop
   "Implements `remove-at` loop over transient vector."
@@ -40,19 +39,19 @@
 ;; Editable persistent vectors.
 
 (extend-type PersistentVector VectorOps
-  (insert-at [v, ^long idx, obj]
-    (if (= idx (.count v))
-      (.cons v obj)
-      (let [m (.meta v)]
-        (-> (.asTransient v)
+  (insert-at [this, ^long idx, obj]
+    (if (= idx (.count this))
+      (.cons this obj)
+      (let [m (.meta this)]
+        (-> (.asTransient this)
             (transient-insert-loop idx obj)
             (persistent!)
             (cond-> m (with-meta m))))))
-  (remove-at [v, ^long idx]
-    (if (= idx (unchecked-dec (.count v)))
-      (.pop v)
-      (let [m (.meta v)]
-        (-> (.asTransient v)
+  (remove-at [this, ^long idx]
+    (if (= idx (unchecked-dec (.count this)))
+      (.pop this)
+      (let [m (.meta this)]
+        (-> (.asTransient this)
             (transient-remove-loop idx)
             (persistent!)
             (cond-> m (with-meta m)))))))
@@ -60,27 +59,24 @@
 ;; Not-editable persistent vector implementations.
 
 (extend-type IPersistentVector VectorOps
-  (insert-at [v, ^long idx, obj]
-    (let [len (.count v)]
+  (insert-at [this, ^long idx, obj]
+    (let [len (.count this)]
       (if (= idx len)
-        (.cons v obj)
-        (loop [i idx, obj obj, v v]
+        (.cons this obj)
+        (loop [i idx, obj obj, res this]
           (if (= i len)
-            (let [m (meta v)]
-              (cond-> (.cons v obj) m (with-meta m)))
-            (let [next-obj (.nth v (unchecked-int i))]
-              (recur (unchecked-inc i) next-obj
-                     (.assocN v (unchecked-int i) obj))))))))
-  (remove-at [v, ^long idx]
-    (let [end (unchecked-dec (.count v))]
+            (.cons res obj)
+            (recur (unchecked-inc i) (.nth res (unchecked-int i))
+                   (.assocN res (unchecked-int i) obj)))))))
+  (remove-at [this, ^long idx]
+    (let [end (unchecked-dec (.count this))]
       (if (= idx end)
-        (.pop v)
-        (loop [i idx, v v]
+        (.pop this)
+        (loop [i idx, res this]
           (if (= i end)
-            (let [m (meta v)]
-              (cond-> (.pop v) m (with-meta m)))
+            (.pop res)
             (let [k (unchecked-inc i)]
-              (recur k (.assocN v (unchecked-int i) (.nth v (unchecked-int k)))))))))))
+              (recur k (.assocN res (unchecked-int i) (.nth res (unchecked-int k)))))))))))
 
 ;; Transient vectors.
 

@@ -50,6 +50,7 @@
       (= [1 2 x 3 4 5] (vec/insert-at (subvec [0 1 2 3 4 5] 1) 2 x))
       (= [x 1 2 3 4 5] (vec/insert-at (subvec [0 1 2 3 4 5] 1) 0 x))
       (= [1 2 3 4 5 x] (vec/insert-at (subvec [0 1 2 3 4 5] 1) 5 x))
+      (= {::meta true} (meta (with-meta (vec/insert-at (subvec [0 1 2 3 4 5] 1) 2 x) {::meta true})))
       (thrown? IndexOutOfBoundsException (vec/insert-at (subvec [0 1 2 3 4 5] 1) -1 x))
       (thrown? IndexOutOfBoundsException (vec/insert-at (subvec [0 1 2 3 4 5] 1) 6 x))))
   )
@@ -94,6 +95,7 @@
       (= [2 3 4 5] (vec/remove-at (subvec [0 1 2 3 4 5] 1) 0))
       (= [1 2 3 4] (vec/remove-at (subvec [0 1 2 3 4 5] 1) 4))
       (= [1 2 4 5] (vec/remove-at (subvec [0 1 2 3 4 5] 1) 2))
+      (= {::meta true} (meta (with-meta (vec/remove-at [1 2 3 4 5] 2) {::meta true})))
       (thrown? IndexOutOfBoundsException (vec/remove-at (subvec [0 1 2 3 4 5] 1) -2))
       (thrown? IndexOutOfBoundsException (vec/remove-at (subvec [0 1 2 3 4 5] 1) 5)))
     (comment
