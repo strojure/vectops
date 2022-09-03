@@ -1,8 +1,8 @@
-# vectoo
+# vectops
 
 Basic operations with Clojure(Script) vectors.
 
-[![Clojars Project](https://img.shields.io/clojars/v/com.github.strojure/vectoo.svg)](https://clojars.org/com.github.strojure/vectoo)
+[![Clojars Project](https://img.shields.io/clojars/v/com.github.strojure/vectops.svg)](https://clojars.org/com.github.strojure/vectops)
 
 ## Purpose
 

@@ -1,6 +1,6 @@
-(ns strojure.vectoo.core-test
+(ns strojure.vectops.core-test
   (:require [clojure.test :as test :refer [deftest testing]]
-            [strojure.vectoo.core :as vec])
+            [strojure.vectops.core :as vec])
   (:import (clojure.lang ITransientCollection)))
 
 (set! *warn-on-reflection* true)
