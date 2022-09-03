@@ -15,5 +15,6 @@ pom.xml.asc
 .lein-failures
 .nrepl-port
 .cache/
+.calva/
+.cljs_node_repl/
 .cpcache/
-.calva

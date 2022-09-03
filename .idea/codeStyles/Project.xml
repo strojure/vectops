@@ -7,6 +7,7 @@
       <option name="commentAlignColumn" value="50" />
       <option name="indentCustomisations">
         <map>
+          <entry key="cljs.test/are" value="2" />
           <entry key="clojure.core/cond-&gt;" value="1" />
           <entry key="clojure.core/cond-&gt;&gt;" value="1" />
           <entry key="clojure.core/defmulti" value="1" />
