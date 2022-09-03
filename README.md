@@ -13,8 +13,47 @@ Basic operations with Clojure(Script) vectors.
 
 ## Usage
 
-### Removing elements
+### insert-at
 
-### Inserting elements
+The function `insert-at` inserts element in the vector at specified index.
 
-### Swapping elements
+```clojure
+(ns readme.usage.insert-at
+  (:require [strojure.vectops.core :as vec]))
+
+(vec/insert-at [1 2 3 4 5] 0 :x)
+#_=> [:x 1 2 3 4 5]
+
+(vec/insert-at [1 2 3 4 5] 2 :x)
+#_=> [1 2 :x 3 4 5]
+
+(vec/insert-at [1 2 3 4 5] 5 :x)
+#_=> [1 2 3 4 5 :x]
+
+(vec/insert-at [1 2 3 4 5] 6 :x)
+;; Execution error (IndexOutOfBoundsException)
+
+(vec/insert-at nil 0 :x)
+#_=> [:x]
+```
+
+### remove-at
+
+The function `remove-at` removes element at specified index from the vector.
+
+```clojure
+(ns readme.usage.remove-at
+  (:require [strojure.vectops.core :as vec]))
+
+(vec/remove-at [1 2 3 4 5] 0)
+#_=> [2 3 4 5]
+
+(vec/remove-at [1 2 3 4 5] 2)
+#_=> [1 2 4 5]
+
+(vec/remove-at [1 2 3 4 5] 4)
+#_=> [1 2 3 4]
+
+(vec/remove-at [1 2 3 4 5] 5)
+;; Execution error (IndexOutOfBoundsException)
+```
