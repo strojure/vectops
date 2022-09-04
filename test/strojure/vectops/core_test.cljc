@@ -17,6 +17,9 @@
 
 (def ^:private x 'x)
 
+(defn- set-meta [obj] (with-meta obj {::meta true}))
+(defn- has-meta? [obj] (= {::meta true} (meta obj)))
+
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (deftest insert-at-test
@@ -40,10 +43,10 @@
 
   (testing "Preserve metadata on insert."
     (test/are [form] form
-      (= {::meta true} (meta (vec/insert-at ^::meta [0 1 2 3 4] 2 x)))
-      (= {::meta true} (meta (vec/insert-at ^::meta [0 1 2 3 4] 0 x)))
-      (= {::meta true} (meta (vec/insert-at ^::meta [0 1 2 3 4] 5 x)))
-      (= {::meta true} (meta (vec/insert-at ^::meta [] 0 x)))
+      (has-meta? (vec/insert-at (set-meta [0 1 2 3 4]) 2 x))
+      (has-meta? (vec/insert-at (set-meta [0 1 2 3 4]) 0 x))
+      (has-meta? (vec/insert-at (set-meta [0 1 2 3 4]) 5 x))
+      (has-meta? (vec/insert-at (set-meta []) 0 x))
       ))
 
   (testing "Insert element in non-editable collection."
@@ -51,7 +54,7 @@
       (= [0 1 x 2 3 4] (vec/insert-at (subvec [0 0 1 2 3 4] 1) 2 x))
       (= [x 0 1 2 3 4] (vec/insert-at (subvec [0 0 1 2 3 4] 1) 0 x))
       (= [0 1 2 3 4 x] (vec/insert-at (subvec [0 0 1 2 3 4] 1) 5 x))
-      (= {::meta true} (meta (with-meta (vec/insert-at (subvec [0 0 1 2 3 4] 1) 2 x) {::meta true})))
+      (has-meta? (vec/insert-at (set-meta (subvec [0 0 1 2 3 4] 1)) 2 x))
       (thrown? #?(:clj IndexOutOfBoundsException :cljs js/Error) (vec/insert-at (subvec [0 0 1 2 3 4] 1) -1 x))
       (thrown? #?(:clj IndexOutOfBoundsException :cljs js/Error) (vec/insert-at (subvec [0 0 1 2 3 4] 1) 6 x))
       ))
@@ -98,10 +101,10 @@
 
   (testing "Preserve metadata on remove."
     (test/are [form] form
-      (= {::meta true} (meta (vec/remove-at ^::meta [0 1 2 3 4] 0)))
-      (= {::meta true} (meta (vec/remove-at ^::meta [0 1 2 3 4] 4)))
-      (= {::meta true} (meta (vec/remove-at ^::meta [0 1 2 3 4] 2)))
-      (= {::meta true} (meta (vec/remove-at ^::meta [1] 0)))
+      (has-meta? (vec/remove-at (set-meta [0 1 2 3 4]) 0))
+      (has-meta? (vec/remove-at (set-meta [0 1 2 3 4]) 4))
+      (has-meta? (vec/remove-at (set-meta [0 1 2 3 4]) 2))
+      (has-meta? (vec/remove-at (set-meta [1]) 0))
       ))
 
   (testing "Remove element in non-editable collection."
@@ -109,7 +112,7 @@
       (= [1 2 3 4] (vec/remove-at (subvec [0 0 1 2 3 4] 1) 0))
       (= [0 1 2 3] (vec/remove-at (subvec [0 0 1 2 3 4] 1) 4))
       (= [0 1 3 4] (vec/remove-at (subvec [0 0 1 2 3 4] 1) 2))
-      (= {::meta true} (meta (with-meta (vec/remove-at [0 1 2 3 4] 2) {::meta true})))
+      (has-meta? (vec/remove-at (set-meta [0 1 2 3 4]) 2))
       ;; Removing in subvec at -1 does not throw exceptions in CLJ
       #?(:clj  (thrown? IndexOutOfBoundsException (vec/remove-at (subvec [0 0 1 2 3 4] 1) -2))
          :cljs (thrown? js/Error,,,,,,,,,,,,,,,,, (vec/remove-at (subvec [0 0 1 2 3 4] 1) -1)))
