@@ -123,3 +123,30 @@
   )
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+(deftest swap-at-test
+
+  (test/are [form] form
+    (vector? (vec/swap-at [0 1 2 3 4] 0 1))
+    (= [1 0 2 3 4] (vec/swap-at [0 1 2 3 4] 0 1))
+    (= [0 3 2 1 4] (vec/swap-at [0 1 2 3 4] 1 3))
+    (= [1 0 2 3 4] (vec/swap-at (subvec [0 0 1 2 3 4] 1) 0 1))
+    (= [:v :k] (vec/swap-at (first {:k :v}) 0 1))
+    (thrown? #?(:clj IndexOutOfBoundsException :cljs js/Error) (vec/swap-at [0 1 2 3 4] 0 5))
+    (thrown? #?(:clj IndexOutOfBoundsException :cljs js/Error) (vec/swap-at [0 1 2 3 4] 0 -1))
+    )
+
+  )
+
+(deftest swap-at!-test
+
+  (test/are [form] form
+    (= [1 0 2 3 4] (persistent! (vec/swap-at! (transient [0 1 2 3 4]) 0 1)))
+    (= [0 3 2 1 4] (persistent! (vec/swap-at! (transient [0 1 2 3 4]) 1 3)))
+    (thrown? #?(:clj IndexOutOfBoundsException :cljs js/Error) (persistent! (vec/swap-at! (transient [0 1 2 3 4]) 0 5)))
+    (thrown? #?(:clj IndexOutOfBoundsException :cljs js/Error) (persistent! (vec/swap-at! (transient [0 1 2 3 4]) 0 -1)))
+    )
+
+  )
+
+;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

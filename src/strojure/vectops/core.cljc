@@ -139,3 +139,37 @@
          (transient-remove-loop vct! idx)))))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+;;; swap-at
+
+(defn swap-at
+  "Swaps elements in persistent vector at indexes `i` and `j`."
+  #?@(:clj
+      ([^IPersistentVector vct, ^long i, ^long j]
+       (-> (or vct [])
+           (.assocN (unchecked-int i) (.nth vct (unchecked-int j)))
+           (.assocN (unchecked-int j) (.nth vct (unchecked-int i)))))
+      :cljs
+      ([vct i j]
+       (-> (or vct [])
+           (-assoc-n i (-nth vct j))
+           (-assoc-n j (-nth vct i))))))
+
+(defn swap-at!
+  "Swaps elements in transient vector at indexes `i` and `j`."
+  #?@(:clj
+      ([^ITransientVector vct!, ^long i, ^long j]
+       (let [vi (.nth vct! (unchecked-int i))
+             vj (.nth vct! (unchecked-int j))]
+         (-> vct!
+             (.assocN (unchecked-int i) vj)
+             (.assocN (unchecked-int j) vi))))
+      :cljs
+      ([vct! i j]
+       (let [vi (-nth vct! i)
+             vj (-nth vct! j)]
+         (-> vct!
+             (-assoc-n! j vi)
+             (-assoc-n! i vj))))))
+
+;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

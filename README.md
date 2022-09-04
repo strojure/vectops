@@ -59,3 +59,19 @@ vector. There is also `remove-at!` function for transient vectors.
 (vec/remove-at [1 2 3 4 5] 5)
 ;; Execution error (IndexOutOfBoundsException)
 ```
+
+### swap-at
+
+The function `swap-at` swaps elements in persistent vector at two indexes.
+There is also `swap-at!` function for transient vectors.
+
+```clojure
+(ns readme.usage.swap-at
+  (:require [strojure.vectops.core :as vec]))
+
+(vec/swap-at [0 1 2 3 4] 1 3)
+#_[0 3 2 1 4]
+
+(vec/swap-at [0 1 2 3 4] 0 5)
+;; Execution error (IndexOutOfBoundsException)
+```
