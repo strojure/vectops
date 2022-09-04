@@ -22,16 +22,16 @@ index. There is also `insert-at!` function for transient vectors.
 (ns readme.usage.insert-at
   (:require [strojure.vectops.core :as vec]))
 
-(vec/insert-at [1 2 3 4 5] 0 :x)
-#_=> [:x 1 2 3 4 5]
+(vec/insert-at [0 1 2 3 4] 0 :x)
+#_=> [:x 0 1 2 3 4]
 
-(vec/insert-at [1 2 3 4 5] 2 :x)
-#_=> [1 2 :x 3 4 5]
+(vec/insert-at [0 1 2 3 4] 2 :x)
+#_=> [0 1 :x 2 3 4]
 
-(vec/insert-at [1 2 3 4 5] 5 :x)
-#_=> [1 2 3 4 5 :x]
+(vec/insert-at [0 1 2 3 4] 5 :x)
+#_=> [0 1 2 3 4 :x]
 
-(vec/insert-at [1 2 3 4 5] 6 :x)
+(vec/insert-at [0 1 2 3 4] 6 :x)
 ;; Execution error (IndexOutOfBoundsException)
 
 (vec/insert-at nil 0 :x)
@@ -47,16 +47,16 @@ vector. There is also `remove-at!` function for transient vectors.
 (ns readme.usage.remove-at
   (:require [strojure.vectops.core :as vec]))
 
-(vec/remove-at [1 2 3 4 5] 0)
-#_=> [2 3 4 5]
-
-(vec/remove-at [1 2 3 4 5] 2)
-#_=> [1 2 4 5]
-
-(vec/remove-at [1 2 3 4 5] 4)
+(vec/remove-at [0 1 2 3 4] 0)
 #_=> [1 2 3 4]
 
-(vec/remove-at [1 2 3 4 5] 5)
+(vec/remove-at [0 1 2 3 4] 2)
+#_=> [0 1 3 4]
+
+(vec/remove-at [0 1 2 3 4] 4)
+#_=> [0 1 2 3]
+
+(vec/remove-at [0 1 2 3 4] 5)
 ;; Execution error (IndexOutOfBoundsException)
 ```
 
