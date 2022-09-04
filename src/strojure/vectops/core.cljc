@@ -1,124 +1,141 @@
 (ns strojure.vectops.core
-  (:require [strojure.vectops.impl :as impl])
-  #?(:clj (:import (clojure.lang IPersistentVector ITransientVector PersistentVector))))
+  #?(:clj (:import (clojure.lang IEditableCollection IPersistentVector ITransientVector))))
 
 #?(:clj (set! *warn-on-reflection* true) :cljs (set! *warn-on-infer* true))
 #?(:clj (set! *unchecked-math* :warn-on-boxed))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defprotocol VectorOps
-  (insert-at [vec, idx, obj]
-    "Inserts `obj` in the vector at index `idx`.")
-  (remove-at [vec, idx]
-    "Removes element from the vector at index `idx`."))
+;;; insert-at
+
+(defn- transient-insert-loop
+  #?@(:clj
+      ([^ITransientVector vct!, ^long idx, obj]
+       (let [len (.count vct!)]
+         (loop [i idx, obj obj, res! vct!]
+           (if (== i len)
+             (.conj res! obj)
+             (recur (unchecked-inc i) (.nth res! (unchecked-int i))
+                    (.assocN res! (unchecked-int i) obj))))))
+      :cljs
+      ([vct!, idx, obj]
+       (let [len (-count vct!)]
+         (loop [i idx, obj obj, res! vct!]
+           (if (== i len)
+             (-conj! res! obj)
+             (recur (inc i) (-nth res! i) (-assoc-n! res! i obj))))))))
+
+(defn- editable-insert-at
+  [vct, ^long idx, obj]
+  (let [m (meta vct)]
+    (-> (transient vct)
+        (transient-insert-loop idx obj)
+        (persistent!)
+        (cond-> m (with-meta m)))))
+
+(defn insert-at
+  "Inserts `obj` in persistent vector at index `idx`."
+  #?@(:clj
+      ([^IPersistentVector vct, ^long idx, obj]
+       (let [vct (or vct []), len (.count vct)]
+         (cond
+           (== idx len) (.cons vct obj)
+           (instance? IEditableCollection vct) (editable-insert-at vct idx obj)
+           :else (loop [i idx, obj obj, res vct]
+                   (if (== i len)
+                     (.cons res obj)
+                     (recur (unchecked-inc i) (.nth res (unchecked-int i))
+                            (.assocN res (unchecked-int i) obj)))))))
+      :cljs
+      ([vct idx obj]
+       (let [vct (or vct []), len (-count vct)]
+         (cond
+           (== idx len) (-conj vct obj)
+           (implements? IEditableCollection vct) (editable-insert-at vct idx obj)
+           :else (loop [i idx, obj obj, res vct]
+                   (if (== i len)
+                     (-conj res obj)
+                     (recur (inc i) (-nth res i) (-assoc-n res i obj)))))))))
+
+(defn insert-at!
+  "Inserts `obj` in transient vector at index `idx`."
+  #?@(:clj
+      ([^ITransientVector vct!, ^long idx, obj]
+       (if (== idx (.count vct!))
+         (.conj vct! obj)
+         (transient-insert-loop vct! idx obj)))
+      :cljs
+      ([vct, idx, obj]
+       (if (== idx (-count vct))
+         (-conj! vct obj)
+         (transient-insert-loop vct idx obj)))))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-;;; Editable persistent vectors.
+;;; remove-at
 
-#?(:clj
-   (extend-type PersistentVector VectorOps
-     (insert-at [this, ^long idx, obj]
-       (if (== idx (.count this))
-         (.cons this obj)
-         (let [m (.meta this)]
-           (-> (.asTransient this)
-               (impl/transient-insert-loop idx obj)
-               (persistent!)
-               (cond-> m (with-meta m))))))
-     (remove-at [this, ^long idx]
-       (if (== idx (unchecked-dec (.count this)))
-         (.pop this)
-         (let [m (.meta this)]
-           (-> (.asTransient this)
-               (impl/transient-remove-loop idx)
-               (persistent!)
-               (cond-> m (with-meta m))))))))
+(defn- transient-remove-loop
+  #?@(:clj
+      ([^ITransientVector vct!, ^long idx]
+       (let [end (unchecked-dec (.count vct!))]
+         (loop [i idx, res! vct!]
+           (if (== i end)
+             (.pop res!)
+             (let [k (unchecked-inc i)]
+               (recur k (.assocN res! (unchecked-int i) (.nth res! (unchecked-int k)))))))))
+      :cljs
+      ([vct!, idx]
+       (let [end (dec (-count vct!))]
+         (loop [i idx, res! vct!]
+           (if (== i end)
+             (-pop! res!)
+             (let [k (inc i)]
+               (recur k (-assoc-n! res! i (-nth res! k))))))))))
 
-#?(:cljs
-   (extend-type PersistentVector VectorOps
-     (insert-at [this, idx, obj]
-       (if (== idx (-count this))
-         (-conj this obj)
-         (let [m (-meta this)]
-           (-> (-as-transient this)
-               (impl/transient-insert-loop idx obj)
-               (-persistent!)
-               (cond-> m (-with-meta m))))))
-     (remove-at [this, idx]
-       (if (== idx (unchecked-dec (-count this)))
-         (-pop this)
-         (let [m (-meta this)]
-           (-> (-as-transient this)
-               (impl/transient-remove-loop idx)
-               (-persistent!)
-               (cond-> m (-with-meta m))))))))
+(defn- editable-remove-at
+  [vct, ^long idx]
+  (let [m (meta vct)]
+    (-> (transient vct)
+        (transient-remove-loop idx)
+        (persistent!)
+        (cond-> m (with-meta m)))))
 
-;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+(defn remove-at
+  "Removes element from persistent vector at index `idx`."
+  #?@(:clj
+      ([^IPersistentVector vct, ^long idx]
+       (let [vct (or vct []), end (unchecked-dec (.count vct))]
+         (cond
+           (== idx end) (.pop vct)
+           (instance? IEditableCollection vct) (editable-remove-at vct idx)
+           :else (loop [i idx, res vct]
+                   (if (== i end)
+                     (.pop res)
+                     (let [k (unchecked-inc i)]
+                       (recur k (.assocN res (unchecked-int i) (.nth res (unchecked-int k))))))))))
+      :cljs
+      ([vct idx]
+       (let [vct (or vct []), end (dec (-count vct))]
+         (cond
+           (== idx end) (-pop vct)
+           (implements? IEditableCollection vct) (editable-remove-at vct idx)
+           :else (loop [i idx, res vct]
+                   (if (== i end)
+                     (-pop res)
+                     (let [k (inc i)]
+                       (recur k (-assoc-n res i (-nth res k)))))))))))
 
-;;; Not-editable persistent vector implementations.
-
-#?(:clj
-   (extend-type IPersistentVector VectorOps
-     (insert-at [this, ^long idx, obj]
-       (let [len (.count this)]
-         (if (== idx len)
-           (.cons this obj)
-           (loop [i idx, obj obj, res this]
-             (if (== i len)
-               (.cons res obj)
-               (recur (unchecked-inc i) (.nth res (unchecked-int i))
-                      (.assocN res (unchecked-int i) obj)))))))
-     (remove-at [this, ^long idx]
-       (let [end (unchecked-dec (.count this))]
-         (if (== idx end)
-           (.pop this)
-           (loop [i idx, res this]
-             (if (== i end)
-               (.pop res)
-               (let [k (unchecked-inc i)]
-                 (recur k (.assocN res (unchecked-int i) (.nth res (unchecked-int k))))))))))))
-
-;; Every class should be listed explicitly, we cannot extend interfaces.
-
-#?(:cljs
-   (extend-type Subvec VectorOps
-     (insert-at [this, idx, obj] (impl/persistent-insert-at this idx obj))
-     (remove-at [this, idx] (impl/persistent-remove-at this idx))))
-
-;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-
-;;; Transient vectors.
-
-#?(:clj
-   (extend-type ITransientVector VectorOps
-     (insert-at [this, ^long idx, obj]
-       (if (== idx (.count this))
-         (.conj this obj)
-         (impl/transient-insert-loop this idx obj)))
-     (remove-at [this, ^long idx]
-       (if (== idx (unchecked-dec (.count this)))
-         (.pop this)
-         (impl/transient-remove-loop this idx)))))
-
-#?(:cljs
-   (extend-type TransientVector VectorOps
-     (insert-at [this, idx, obj]
-       (if (== idx (-count this))
-         (-conj! this obj)
-         (impl/transient-insert-loop this idx obj)))
-     (remove-at [this, idx]
-       (if (== idx (dec (-count this)))
-         (-pop! this)
-         (impl/transient-remove-loop this idx)))))
-
-;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-
-;;; `nil` as empty vector.
-
-(extend-type nil VectorOps
-  (insert-at [_, idx, obj] (insert-at [] idx obj))
-  (remove-at [_, idx] (remove-at [] idx)))
+(defn remove-at!
+  "Removes element from transient vector at index `idx`."
+  #?@(:clj
+      ([^ITransientVector vct!, ^long idx]
+       (if (== idx (unchecked-dec (.count vct!)))
+         (.pop vct!)
+         (transient-remove-loop vct! idx)))
+      :cljs
+      ([vct!, idx]
+       (if (== idx (dec (-count vct!)))
+         (-pop! vct!)
+         (transient-remove-loop vct! idx)))))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

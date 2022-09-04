@@ -15,7 +15,8 @@ Basic operations with Clojure(Script) vectors.
 
 ### insert-at
 
-The function `insert-at` inserts element in the vector at specified index.
+The function `insert-at` inserts element in persistent vector at specified
+index. There is also `insert-at!` function for transient vectors.
 
 ```clojure
 (ns readme.usage.insert-at
@@ -39,7 +40,8 @@ The function `insert-at` inserts element in the vector at specified index.
 
 ### remove-at
 
-The function `remove-at` removes element at specified index from the vector.
+The function `remove-at` removes element at specified index from persistent
+vector. There is also `remove-at!` function for transient vectors.
 
 ```clojure
 (ns readme.usage.remove-at
