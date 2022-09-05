@@ -75,3 +75,11 @@ There is also `swap-at!` function for transient vectors.
 (vec/swap-at [0 1 2 3 4] 0 5)
 ;; Execution error (IndexOutOfBoundsException)
 ```
+
+## Performance
+
+* [vec/insert-at](test/perf/insert_at.cljc)
+
+* [vec/remove-at](test/perf/remove_at.cljc)
+
+* [vec/swap-at](test/perf/swap_at.cljc)
