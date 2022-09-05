@@ -12,7 +12,7 @@
   (-> vct (assoc i (vct j)) (assoc j (vct i))))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-;;; Short array
+;;; Short vector
 
 (vec/swap-at v10 0 9)
 ;Evaluation count : 14561208 in 6 samples of 2426868 calls.
@@ -33,7 +33,7 @@
 ;CLJS (dotimes [_ 10000]) Elapsed time: 2.471000 msecs
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-;;; Long array
+;;; Long vector
 
 (vec/swap-at v1000 0 999)
 ;Evaluation count : 7948134 in 6 samples of 1324689 calls.
