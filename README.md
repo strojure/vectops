@@ -4,6 +4,10 @@ Basic operations with Clojure(Script) vectors.
 
 [![Clojars Project](https://img.shields.io/clojars/v/com.github.strojure/vectops.svg)](https://clojars.org/com.github.strojure/vectops)
 
+[![cljdoc badge](https://cljdoc.org/badge/com.github.strojure/vectops)](https://cljdoc.org/d/com.github.strojure/vectops)
+[![cljs compatible](https://img.shields.io/badge/cljs-compatible-green)](https://clojurescript.org/)
+[![tests](https://github.com/strojure/vectops/actions/workflows/tests.yml/badge.svg)](https://github.com/strojure/vectops/actions/workflows/tests.yml)
+
 ## Purpose
 
 * Provide functions for basic operations with persistent vectors like inserting
