@@ -1,4 +1,4 @@
-(defproject com.github.strojure/vectops "1.1.23-SNAPSHOT"
+(defproject com.github.strojure/vectops "1.0.30"
   :description "Basic operations with Clojure vectors."
   :url "https://github.com/strojure/vectops"
   :license {:name "The Unlicense" :url "https://unlicense.org"}
