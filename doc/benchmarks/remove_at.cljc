@@ -1,4 +1,4 @@
-(ns perf.remove-at
+(ns benchmarks.remove-at
   (:require [strojure.vectops.core :as vec]))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

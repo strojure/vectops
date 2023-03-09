@@ -1,4 +1,4 @@
-(ns perf.insert-at
+(ns benchmarks.insert-at
   (:require [strojure.vectops.core :as vec]))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

@@ -1,4 +1,4 @@
-(ns perf.swap-at
+(ns benchmarks.swap-at
   (:require [strojure.vectops.core :as vec]))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

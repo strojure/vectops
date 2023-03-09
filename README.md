@@ -78,8 +78,8 @@ There is also `swap-at!` function for transient vectors.
 
 ## Performance
 
-* [vec/insert-at](test/perf/insert_at.cljc)
+* [vec/insert-at](doc/benchmarks/insert_at.cljc)
 
-* [vec/remove-at](test/perf/remove_at.cljc)
+* [vec/remove-at](doc/benchmarks/remove_at.cljc)
 
-* [vec/swap-at](test/perf/swap_at.cljc)
+* [vec/swap-at](doc/benchmarks/swap_at.cljc)
